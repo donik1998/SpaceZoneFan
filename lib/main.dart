@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spacefanzone/screens/EarthPhotos.dart';
 
 void main() {
   runApp(
@@ -15,7 +16,8 @@ class HomePage extends StatelessWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('NASA API features'),
+          title: Text('Space Fan Zone'),
+          centerTitle: true,
           bottom: TabBar(
             indicatorPadding: EdgeInsets.all(5.0),
             indicatorWeight: 2.0,
@@ -28,25 +30,17 @@ class HomePage extends StatelessWidget {
             ],
           ),
         ),
-        body: Container(
-          child: TabBarView(
-            children: [
-              Center(
-                child: Container(
-                  color: Colors.red,
-                  height: 100.0,
-                  width: 100.0,
-                ),
+        body: TabBarView(
+          children: [
+            EPIC(),
+            Center(
+              child: Container(
+                color: Colors.red,
+                height: 100.0,
+                width: 100.0,
               ),
-              Center(
-                child: Container(
-                  color: Colors.red,
-                  height: 100.0,
-                  width: 100.0,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
