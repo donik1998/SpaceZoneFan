@@ -86,8 +86,6 @@ class _EPICState extends State<EPIC> {
     if (response.statusCode == 200) {
       setState(() {
         _images = List<EpicImage>.from(json.decode(response.body));
-        List<EpicImage> epicImageFromJson(String str) => List<EpicImage>.from(
-            json.decode(str).map((x) => EpicImage.fromJson(x)));
       });
     } else {
       return '';
@@ -96,5 +94,16 @@ class _EPICState extends State<EPIC> {
 }
 
 class EpicImage {
-  static fromJson(x) {}
+  final String image, caption;
+  final DateTime date;
+
+  EpicImage({this.image, this.caption, this.date});
+
+  factory EpicImage.fromJson(Map<String, dynamic> jsonData) {
+    return EpicImage(
+      image: jsonData['image'],
+      caption: jsonData['caption'],
+      date: DateTime.parse(jsonData['date']),
+    );
+  }
 }
