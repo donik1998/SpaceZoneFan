@@ -1,9 +1,23 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:spacefanzone/services/EPICapiService.dart';
 
-class EPIC extends StatelessWidget {
-  EPICapiQueryBuilder _queryBuilder;
+class EPIC extends StatefulWidget {
+  @override
+  _EPICState createState() => _EPICState();
+}
+
+class _EPICState extends State<EPIC> {
+  EPICapiService _epicService;
+  List<EpicImage> _images;
+
+  @override
+  void initState() {
+    super.initState();
+    getRecentPhotos();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +29,8 @@ class EPIC extends StatelessWidget {
         children: [
           MaterialButton(
             onPressed: () async {
-              _queryBuilder = EPICapiQueryBuilder(await _selectDate(context));
+              _epicService = EPICapiService(await _selectDate(context));
+              print(_epicService.getPhotosOnDate().toString());
             },
             height: MediaQuery.of(context).size.height * 0.1,
             minWidth: MediaQuery.of(context).size.width * 0.75,
@@ -35,27 +50,18 @@ class EPIC extends StatelessWidget {
                 color: Colors.white,
                 fontSize: 24.0,
                 fontWeight: FontWeight.bold,
-                fontFamily: '',
+                fontFamily: 'Overpass-Regular',
               ),
             ),
           ),
           Container(
             height: MediaQuery.of(context).size.height * 0.6,
-            child: _queryBuilder == null
+            child: _epicService == null
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
-                : StreamBuilder(
-                    stream: _queryBuilder.getPhotosOnDate().asStream(),
-                    builder: (context, snapshot) {
-                      return ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        physics: BouncingScrollPhysics(),
-                        itemCount: snapshot.data.lenght,
-                        itemBuilder: (context, index) =>
-                            _buildItem(context, snapshot.data.documents[index]),
-                      );
-                    },
+                : ListView.builder(
+                    itemBuilder: _buildItem(context),
                   ),
           ),
         ],
@@ -70,21 +76,25 @@ class EPIC extends StatelessWidget {
       firstDate: DateTime(2010, 1),
       lastDate: DateTime(2100),
     );
-    print(_pickedDate.toUtc());
     return _pickedDate;
   }
 
-  _buildItem(BuildContext context, document) {}
+  _buildItem(BuildContext context) {}
 
-  // _buildItem(BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-  //   if (snapshot.hasData) {
-  //     return Container(
-  //       child: Text(
-  //         snapshot.data,
-  //       ),
-  //     );
-  //   } else {
-  //     return Text('nothing to display');
-  //   }
-  // }
+  getRecentPhotos() async {
+    Response response = await get('https://epic.gsfc.nasa.gov/api/images.php');
+    if (response.statusCode == 200) {
+      setState(() {
+        _images = List<EpicImage>.from(json.decode(response.body));
+        List<EpicImage> epicImageFromJson(String str) => List<EpicImage>.from(
+            json.decode(str).map((x) => EpicImage.fromJson(x)));
+      });
+    } else {
+      return '';
+    }
+  }
+}
+
+class EpicImage {
+  static fromJson(x) {}
 }
