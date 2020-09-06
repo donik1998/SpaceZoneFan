@@ -8,7 +8,6 @@ class EPIC extends StatefulWidget {
 }
 
 class _EPICState extends State<EPIC> {
-  EPICapiService _epicService;
   List<EpicImage> _images;
 
   @override
@@ -51,14 +50,14 @@ class _EPICState extends State<EPIC> {
           ),
           Container(
             height: MediaQuery.of(context).size.height * 0.6,
-            child: _epicService == null
+            child: _images.isEmpty
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
                 : ListView.builder(itemBuilder: (context, index) {
-                    EpicImage image = _images[index];
+                    EpicImage currentImage = _images[index];
+                    //todo implement getting real images
                     return null;
-                    //todo implement actual images
                   }),
           ),
         ],
