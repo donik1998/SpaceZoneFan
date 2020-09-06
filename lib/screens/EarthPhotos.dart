@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:spacefanzone/services/EPICapiService.dart';
+import 'package:spacefanzone/services/EpicImage.dart';
 
 class EPIC extends StatefulWidget {
   @override
@@ -16,7 +14,7 @@ class _EPICState extends State<EPIC> {
   @override
   void initState() {
     super.initState();
-    getRecentPhotos();
+    EPICapiService.getImages()..then((images) => {_images = images});
   }
 
   @override
@@ -28,10 +26,7 @@ class _EPICState extends State<EPIC> {
         mainAxisSize: MainAxisSize.max,
         children: [
           MaterialButton(
-            onPressed: () async {
-              _epicService = EPICapiService(await _selectDate(context));
-              print(_epicService.getPhotosOnDate().toString());
-            },
+            onPressed: () {},
             height: MediaQuery.of(context).size.height * 0.1,
             minWidth: MediaQuery.of(context).size.width * 0.75,
             splashColor: Colors.white,
@@ -60,9 +55,11 @@ class _EPICState extends State<EPIC> {
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
-                : ListView.builder(
-                    itemBuilder: _buildItem(context),
-                  ),
+                : ListView.builder(itemBuilder: (context, index) {
+                    EpicImage image = _images[index];
+                    return null;
+                    //todo implement actual images
+                  }),
           ),
         ],
       ),
@@ -79,31 +76,29 @@ class _EPICState extends State<EPIC> {
     return _pickedDate;
   }
 
-  _buildItem(BuildContext context) {}
-
   getRecentPhotos() async {
     Response response = await get('https://epic.gsfc.nasa.gov/api/images.php');
     if (response.statusCode == 200) {
-      setState(() {
-        _images = List<EpicImage>.from(json.decode(response.body));
-      });
+      setState(() {});
     } else {
       return '';
     }
   }
 }
 
-class EpicImage {
-  final String image, caption;
-  final DateTime date;
-
-  EpicImage({this.image, this.caption, this.date});
-
-  factory EpicImage.fromJson(Map<String, dynamic> jsonData) {
-    return EpicImage(
-      image: jsonData['image'],
-      caption: jsonData['caption'],
-      date: DateTime.parse(jsonData['date']),
-    );
-  }
-}
+// class EpicImage {
+//   final String image, caption;
+//   final DateTime date;
+//
+//   EpicImage({this.image, this.caption, this.date});
+//
+//   factory EpicImage.fromJson(Map<String, dynamic> jsonData) {
+//     return EpicImage(
+//       image: jsonData['image'],
+//       caption: jsonData['caption'],
+//       date: DateTime.parse(
+//         jsonData['date'],
+//       ),
+//     );
+//   }
+// }
