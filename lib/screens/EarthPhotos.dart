@@ -1,5 +1,5 @@
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:spacefanzone/services/EpicImage.dart';
 
 class EPIC extends StatefulWidget {
@@ -8,12 +8,17 @@ class EPIC extends StatefulWidget {
 }
 
 class _EPICState extends State<EPIC> {
-  List<EpicImage> _images;
+  List<EpicImage> _images = List<EpicImage>();
 
   @override
   void initState() {
     super.initState();
-    EPICapiService.getImages()..then((images) => {_images = images});
+    EPICapiService.getImages()
+      ..then((images) => {
+            setState(() {
+              _images = images;
+            })
+          });
   }
 
   @override
@@ -35,7 +40,7 @@ class _EPICState extends State<EPIC> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10.0),
               side: BorderSide(
-                color: Colors.black,
+                color: Colors.white,
                 width: 5.0,
               ),
             ),
@@ -56,11 +61,20 @@ class _EPICState extends State<EPIC> {
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
-                : ListView.builder(itemBuilder: (context, index) {
-                    EpicImage currentImage = _images[index];
-                    //todo implement getting real images
-                    return _buildItem(currentImage);
-                  }),
+                : ListView.builder(
+                    itemCount: _images.length,
+                    itemBuilder: (context, index) {
+                      EpicImage currentImage = _images[index];
+                      return Container(
+                        child: _buildItem(currentImage),
+                        padding: EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        width: MediaQuery.of(context).size.width * 0.5,
+                      );
+                    }),
           ),
         ],
       ),
@@ -77,19 +91,39 @@ class _EPICState extends State<EPIC> {
     return _pickedDate;
   }
 
-  getRecentPhotos() async {
-    Response response = await get('https://epic.gsfc.nasa.gov/api/images.php');
-    if (response.statusCode == 200) {
-      setState(() {});
-    } else {
-      return '';
-    }
-  }
+  Widget _buildItem(EpicImage currentImage) {
+    String convertedDateTime =
+        '${currentImage.date.year.toString()}/${currentImage.date.month.toString().padLeft(2, '0')}/${currentImage.date.day.toString().padLeft(2, '0')}';
+    return Image.network(
+      'https://epic.gsfc.nasa.gov/archive/natural/$convertedDateTime/png/${currentImage.image}.png',
 
-  Widget _buildItem(EpicImage currentImage) {}
-
-  getEpicImage(DateTime date, String imageTitle) async {
-    return Image();
+      loadingBuilder: (BuildContext context, Widget child,
+          ImageChunkEvent loadingProgress) {
+        if (loadingProgress == null) {
+          return child;
+        }
+        return Center(
+          child: FlareActor(
+            'assets/images/LiquidLoad.flr',
+            fit: BoxFit.contain,
+            alignment: Alignment.center,
+            animation: 'Loading',
+          ),
+        );
+      },
+      // loadingBuilder: (BuildContext context, Widget child,
+      //     ImageChunkEvent loadingProgress) {
+      //   if (loadingProgress == null) return child;
+      //   return Center(
+      //     child: CircularProgressIndicator(
+      //       value: loadingProgress.expectedTotalBytes != null
+      //           ? loadingProgress.cumulativeBytesLoaded /
+      //               loadingProgress.expectedTotalBytes
+      //           : null,
+      //     ),
+      //   );
+      // },
+    );
   }
 }
 

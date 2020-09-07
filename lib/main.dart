@@ -15,6 +15,7 @@ class HomePage extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
+        backgroundColor: Colors.black,
         appBar: AppBar(
           title: Text('Space Fan Zone'),
           centerTitle: true,
