@@ -18,15 +18,8 @@ class EPICapiService {
   }
 }
 
-// To parse this JSON data, do
-//
-//     final epicImage = epicImageFromJson(jsonString);
-
 List<EpicImage> epicImageFromJson(String str) =>
     List<EpicImage>.from(json.decode(str).map((x) => EpicImage.fromJson(x)));
-
-String epicImageToJson(List<EpicImage> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class EpicImage {
   EpicImage({
