@@ -25,7 +25,9 @@ class _EPICState extends State<EPIC> {
         mainAxisSize: MainAxisSize.max,
         children: [
           MaterialButton(
-            onPressed: () {},
+            onPressed: () {
+              _selectDate(context);
+            },
             height: MediaQuery.of(context).size.height * 0.1,
             minWidth: MediaQuery.of(context).size.width * 0.75,
             splashColor: Colors.white,
@@ -57,7 +59,7 @@ class _EPICState extends State<EPIC> {
                 : ListView.builder(itemBuilder: (context, index) {
                     EpicImage currentImage = _images[index];
                     //todo implement getting real images
-                    return null;
+                    return _buildItem(currentImage);
                   }),
           ),
         ],
@@ -82,6 +84,12 @@ class _EPICState extends State<EPIC> {
     } else {
       return '';
     }
+  }
+
+  Widget _buildItem(EpicImage currentImage) {}
+
+  getEpicImage(DateTime date, String imageTitle) async {
+    return Image();
   }
 }
 
