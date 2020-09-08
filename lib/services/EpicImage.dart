@@ -16,6 +16,12 @@ class EPICapiService {
       return List<EpicImage>();
     }
   }
+
+  static Future<List<EpicImage>> getImagesToDate(DateTime date) async {
+    try {} catch (e) {
+      return List<EpicImage>();
+    }
+  }
 }
 
 List<EpicImage> epicImageFromJson(String str) =>
