@@ -59,22 +59,29 @@ class _EPICState extends State<EPIC> {
             height: MediaQuery.of(context).size.height * 0.6,
             child: _images.isEmpty
                 ? Center(
-                    child: CircularProgressIndicator(),
+                    child: FlareActor(
+                      'assets/images/LiquidLoad.flr',
+                      fit: BoxFit.contain,
+                      alignment: Alignment.center,
+                      animation: 'Loading',
+                    ),
                   )
                 : ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    physics: BouncingScrollPhysics(),
                     itemCount: _images.length,
                     itemBuilder: (context, index) {
-                      EpicImage currentImage = _images[index];
                       return Container(
-                        child: _buildItem(currentImage),
+                        child: _buildItem(_images[index]),
                         padding: EdgeInsets.all(10.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                         ),
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        width: MediaQuery.of(context).size.width * 0.5,
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        width: MediaQuery.of(context).size.width,
                       );
-                    }),
+                    },
+                  ),
           ),
         ],
       ),
@@ -96,18 +103,17 @@ class _EPICState extends State<EPIC> {
         '${currentImage.date.year.toString()}/${currentImage.date.month.toString().padLeft(2, '0')}/${currentImage.date.day.toString().padLeft(2, '0')}';
     return Image.network(
       'https://epic.gsfc.nasa.gov/archive/natural/$convertedDateTime/png/${currentImage.image}.png',
-
       loadingBuilder: (BuildContext context, Widget child,
           ImageChunkEvent loadingProgress) {
         if (loadingProgress == null) {
           return child;
         }
         return Center(
-          child: FlareActor(
-            'assets/images/LiquidLoad.flr',
-            fit: BoxFit.contain,
-            alignment: Alignment.center,
-            animation: 'Loading',
+          child: CircularProgressIndicator(
+            value: loadingProgress.expectedTotalBytes != null
+                ? loadingProgress.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes
+                : null,
           ),
         );
       },
@@ -115,12 +121,7 @@ class _EPICState extends State<EPIC> {
       //     ImageChunkEvent loadingProgress) {
       //   if (loadingProgress == null) return child;
       //   return Center(
-      //     child: CircularProgressIndicator(
-      //       value: loadingProgress.expectedTotalBytes != null
-      //           ? loadingProgress.cumulativeBytesLoaded /
-      //               loadingProgress.expectedTotalBytes
-      //           : null,
-      //     ),
+      //
       //   );
       // },
     );
