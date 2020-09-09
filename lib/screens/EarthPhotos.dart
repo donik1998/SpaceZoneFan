@@ -1,4 +1,5 @@
 import 'package:flare_flutter/flare_actor.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:spacefanzone/services/EpicImage.dart';
 
@@ -53,9 +54,12 @@ class _EPICState extends State<EPIC> {
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         mainAxisSize: MainAxisSize.max,
         children: [
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.0125,
+          ),
           MaterialButton(
             onPressed: () {
               _selectDate(context);
@@ -85,17 +89,18 @@ class _EPICState extends State<EPIC> {
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: 50.0,
-              vertical: 0.0,
+              vertical: 10.0,
             ),
             child: Text(
               'Most recent photos of Earth to ${_currentDateTime.day}$_dayEnding of ${_months[_currentDateTime.month]}, ${_currentDateTime.year}',
               style: TextStyle(
                 color: Colors.white,
               ),
+              textAlign: TextAlign.center,
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.6,
+            height: MediaQuery.of(context).size.height * 0.5,
             child: _images.isEmpty
                 ? Center(
                     child: FlareActor(
@@ -124,7 +129,7 @@ class _EPICState extends State<EPIC> {
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 50.0,
-                              vertical: 0.0,
+                              vertical: 10.0,
                             ),
                             child: Text(
                               'Taken on ' +
@@ -152,13 +157,17 @@ class _EPICState extends State<EPIC> {
       firstDate: DateTime(2010, 1),
       lastDate: DateTime(2100),
     );
-    EPICapiService.getImages()
-      ..then((images) => {
-            setState(() {
+    EPICapiService.getImagesToDate(_pickedDate, context)
+      ..then(
+        (images) => {
+          setState(
+            () {
               _images = images;
-            })
-          });
-    return _pickedDate;
+              _currentDateTime = _pickedDate;
+            },
+          ),
+        },
+      );
   }
 
   Widget _buildItem(EpicImage currentImage) {
