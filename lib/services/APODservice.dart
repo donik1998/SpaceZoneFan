@@ -29,7 +29,7 @@ class ApodService {
 
   static Future<ApodService> getPictureOfDay() async {
     Response response = await get(
-        'https://api.nasa.gov/planetary/apod?api_key=r7aoIse2731GHse708W49A8NAPakt4fDJxmklqV1&date=2020-09-01');
+        'https://api.nasa.gov/planetary/apod?api_key=r7aoIse2731GHse708W49A8NAPakt4fDJxmklqV1');
     if (response.statusCode == 200) {
       return ApodService.fromJson(jsonDecode(response.body));
     }
