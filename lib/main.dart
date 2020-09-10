@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:spacefanzone/screens/EarthPhotos.dart';
+import 'package:spacefanzone/screens/PictureOfTheDay.dart';
 
 void main() {
   runApp(
@@ -34,13 +35,7 @@ class HomePage extends StatelessWidget {
         body: TabBarView(
           children: [
             EPIC(),
-            Center(
-              child: Container(
-                color: Colors.red,
-                height: 100.0,
-                width: 100.0,
-              ),
-            ),
+            APOD(),
           ],
         ),
       ),
