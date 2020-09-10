@@ -189,30 +189,6 @@ class _EPICState extends State<EPIC> {
           ),
         );
       },
-      // loadingBuilder: (BuildContext context, Widget child,
-      //     ImageChunkEvent loadingProgress) {
-      //   if (loadingProgress == null) return child;
-      //   return Center(
-      //
-      //   );
-      // },
     );
   }
 }
-
-// class EpicImage {
-//   final String image, caption;
-//   final DateTime date;
-//
-//   EpicImage({this.image, this.caption, this.date});
-//
-//   factory EpicImage.fromJson(Map<String, dynamic> jsonData) {
-//     return EpicImage(
-//       image: jsonData['image'],
-//       caption: jsonData['caption'],
-//       date: DateTime.parse(
-//         jsonData['date'],
-//       ),
-//     );
-//   }
-// }

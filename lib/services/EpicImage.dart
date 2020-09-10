@@ -73,25 +73,8 @@ class EPICapiService {
   }
 }
 
-// To parse this JSON data, do
-//
-//     final datesAvailable = datesAvailableFromJson(jsonString);
-
 List<DateTime> datesAvailableFromJson(String str) =>
     List<DateTime>.from(json.decode(str).map((x) => DateTime.parse(x)));
-
-// List<DatesAvailable> datesAvailableFromJson(String str) =>
-//     List<DatesAvailable>.from(json.decode(str).map((x) => DatesAvailable.fromJson(x)));
-
-// class DatesAvailable {
-//   final List<DateTime> dates;
-//
-//   DatesAvailable({this.dates});
-//
-//   factory DatesAvailable.fromJson(Map<String, dynamic> JsonData) {
-//     return DatesAvailable(dates: )
-//   }
-// }
 
 List<EpicImage> epicImageFromJson(String str) =>
     List<EpicImage>.from(json.decode(str).map((x) => EpicImage.fromJson(x)));
