@@ -1,9 +1,9 @@
 import 'package:flare_flutter/flare_actor.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:spacefanzone/services/APODservice.dart';
+import 'package:spacefanzone/data/models/apod_model.dart';
+import 'package:spacefanzone/data/services/apod_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class APOD extends StatefulWidget {
@@ -12,16 +12,16 @@ class APOD extends StatefulWidget {
 }
 
 class _APODState extends State<APOD> {
-  WebViewController _completer;
-  ApodService _apod;
+  APODModel? _apod;
 
   @override
   void initState() {
     ApodService.getPictureOfDay()
       ..then((apod) => {
-            setState(() {
-              _apod = apod;
-            })
+            if (apod is APODModel)
+              setState(() {
+                _apod = apod;
+              })
           });
     super.initState();
   }
@@ -51,7 +51,7 @@ class _APODState extends State<APOD> {
                     ),
                     child: RichText(
                       text: TextSpan(
-                        text: _apod.title,
+                        text: _apod!.title,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 28.0,
@@ -65,9 +65,7 @@ class _APODState extends State<APOD> {
                             ),
                           ),
                           TextSpan(
-                            text: _apod.copyright != null
-                                ? _apod.copyright
-                                : 'Anonymous',
+                            text: _apod!.copyright != null ? _apod!.copyright : 'Anonymous',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
@@ -78,7 +76,7 @@ class _APODState extends State<APOD> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  _apod.mediaType == 'image'
+                  _apod!.mediaType == 'image'
                       ? Container(
                           padding: const EdgeInsets.all(10.0),
                           margin: const EdgeInsets.all(10.0),
@@ -92,18 +90,15 @@ class _APODState extends State<APOD> {
                             borderRadius: BorderRadius.circular(5.0),
                           ),
                           child: Image.network(
-                            _apod.url,
-                            loadingBuilder: (BuildContext context, Widget child,
-                                ImageChunkEvent loadingProgress) {
+                            _apod!.url!,
+                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                               if (loadingProgress == null) {
                                 return child;
                               }
                               return Center(
                                 child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                                       : null,
                                 ),
                               );
@@ -123,19 +118,17 @@ class _APODState extends State<APOD> {
                             borderRadius: BorderRadius.circular(5.0),
                           ),
                           child: WebView(
-                            initialUrl: _apod.url,
+                            initialUrl: _apod!.url,
                             gestureRecognizers: Set()
-                              ..add(Factory<HorizontalDragGestureRecognizer>(
-                                  () => HorizontalDragGestureRecognizer()))
-                              ..add(Factory<VerticalDragGestureRecognizer>(
-                                  () => VerticalDragGestureRecognizer())),
+                              ..add(Factory<HorizontalDragGestureRecognizer>(() => HorizontalDragGestureRecognizer()))
+                              ..add(Factory<VerticalDragGestureRecognizer>(() => VerticalDragGestureRecognizer())),
                             javascriptMode: JavascriptMode.unrestricted,
                           ),
                         ),
                   Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Text(
-                      _apod.explanation,
+                      _apod!.explanation!,
                       style: TextStyle(
                         color: Colors.white,
                       ),

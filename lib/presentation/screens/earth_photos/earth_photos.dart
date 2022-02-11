@@ -1,7 +1,8 @@
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:spacefanzone/services/EpicImage.dart';
+import 'package:spacefanzone/data/models/epic_image_model.dart';
+import 'package:spacefanzone/data/services/epic_service.dart';
 
 class EPIC extends StatefulWidget {
   @override
@@ -9,22 +10,22 @@ class EPIC extends StatefulWidget {
 }
 
 class _EPICState extends State<EPIC> {
-  List<EpicImage> _images = List<EpicImage>();
-  DateTime _currentDateTime;
-  List<String> _months;
-  String _dayEnding;
+  List<EpicImageModel> _images = List<EpicImageModel>.empty();
+  late DateTime _currentDateTime;
+  late List<String> _months;
+  String? _dayEnding;
 
   @override
   void initState() {
     super.initState();
-    EPICapiService.getImages()
+    EPICAPIService.getImages()
       ..then((images) => {
             setState(() {
               _images = images;
             })
           });
     _currentDateTime = DateTime.now();
-    _months = List<String>();
+    _months = List<String>.empty();
     _months.add('offsetItem');
     _months.add('January');
     _months.add('February');
@@ -133,7 +134,7 @@ class _EPICState extends State<EPIC> {
                             ),
                             child: Text(
                               'Taken on ' +
-                                  '${_images[index].date.day}$_dayEnding of ${_months[_images[index].date.month]}, ${_images[index].date.year}',
+                                  '${_images[index].date!.day}$_dayEnding of ${_months[_images[index].date!.month]}, ${_images[index].date!.year}',
                               style: TextStyle(
                                 color: Colors.white,
                               ),
@@ -157,8 +158,8 @@ class _EPICState extends State<EPIC> {
       firstDate: DateTime(2010, 1),
       lastDate: DateTime(2100),
     );
-    EPICapiService.getImagesToDate(_pickedDate, context)
-      ..then(
+    if (_pickedDate is DateTime)
+      EPICAPIService.getImagesToDate(_pickedDate, context).then(
         (images) => {
           setState(
             () {
@@ -170,21 +171,19 @@ class _EPICState extends State<EPIC> {
       );
   }
 
-  Widget _buildItem(EpicImage currentImage) {
+  Widget _buildItem(EpicImageModel currentImage) {
     String convertedDateTime =
-        '${currentImage.date.year.toString()}/${currentImage.date.month.toString().padLeft(2, '0')}/${currentImage.date.day.toString().padLeft(2, '0')}';
+        '${currentImage.date!.year.toString()}/${currentImage.date!.month.toString().padLeft(2, '0')}/${currentImage.date!.day.toString().padLeft(2, '0')}';
     return Image.network(
       'https://epic.gsfc.nasa.gov/archive/natural/$convertedDateTime/png/${currentImage.image}.png',
-      loadingBuilder: (BuildContext context, Widget child,
-          ImageChunkEvent loadingProgress) {
+      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         if (loadingProgress == null) {
           return child;
         }
         return Center(
           child: CircularProgressIndicator(
             value: loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes
+                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                 : null,
           ),
         );
