@@ -21,7 +21,7 @@ class _EPICState extends State<EPIC> {
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
-      final images = await EPICAPIService.instance.getImages();
+      final images = await EPICService.instance.getImages();
       if (images is List<EpicImageModel>) setState(() => _images = images);
     });
     _currentDateTime = DateTime.now();
@@ -90,7 +90,7 @@ class _EPICState extends State<EPIC> {
       lastDate: DateTime.now().add(period),
     );
     if (_pickedDate is DateTime) {
-      EPICAPIService.instance.getClosetsToDateImages(_pickedDate).then((images) {
+      EPICService.instance.getClosetsToDateImages(_pickedDate).then((images) {
         setState(() {
           _images = images;
           _currentDateTime = _pickedDate;

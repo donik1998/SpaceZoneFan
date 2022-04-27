@@ -10,46 +10,50 @@ abstract class EPICRepository {
   Future<dynamic> getClosetsToDateImages(DateTime date);
 }
 
-class EPICAPIService extends EPICRepository {
-  EPICAPIService._();
+class EPICService implements EPICRepository {
+  EPICService._();
 
-  static EPICAPIService get instance => EPICAPIService._();
+  static EPICService get instance => EPICService._();
 
-  final client = Apis(Dio(), CancelToken(), baseUrl: 'https://epic.gsfc.nasa.gov');
+  final _client = Apis(Dio(), CancelToken(), baseUrl: 'https://epic.gsfc.nasa.gov');
 
   @override
   Future<dynamic> getImages() async {
     try {
-      final images = await client.getEpicImage();
+      final images = await _client.getEpicImage();
       return images;
     } catch (e) {
       print(e);
     }
   }
 
-  static Future<bool> _dateIsAvailable(String formattedDate) async {
-    // try {
-    //   final Response response = await get(Uri.parse('https://epic.gsfc.nasa.gov/api/natural/available'));
-    //   if (response.statusCode == 200) {
-    //     List<DateTime> dates = datesAvailableFromJson(response.body);
-    //     if (dates.contains(DateTime.parse(formattedDate))) {
-    //       return true;
-    //     } else {
-    //       return false;
-    //     }
-    //   }
-    //   return false;
-    // } catch (e) {
-    //   return false;
-    // }
-    return false;
-  }
+  // static Future<bool> _dateIsAvailable(String formattedDate) async {
+  //   // try {
+  //   //   final Response response = await get(Uri.parse('https://epic.gsfc.nasa.gov/api/natural/available'));
+  //   //   if (response.statusCode == 200) {
+  //   //     List<DateTime> dates = datesAvailableFromJson(response.body);
+  //   //     if (dates.contains(DateTime.parse(formattedDate))) {
+  //   //       return true;
+  //   //     } else {
+  //   //       return false;
+  //   //     }
+  //   //   }
+  //   //   return false;
+  //   // } catch (e) {
+  //   //   return false;
+  //   // }
+  //   return false;
+  // }
 
   @override
   Future<dynamic> getClosetsToDateImages(DateTime date) async {
-    String formattedDate = DateFormat('yyyy-MM-dd').format(date);
-    final images = await client.getClosetsToDateImages(formattedDate);
-    return images;
+    try {
+      String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+      final images = await _client.getClosetsToDateImages(formattedDate);
+      return images;
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }
 

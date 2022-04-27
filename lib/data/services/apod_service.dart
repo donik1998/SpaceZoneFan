@@ -11,12 +11,12 @@ class ApodService implements _ApodRepository {
 
   static ApodService get instance => ApodService._();
 
-  final Apis client = Apis(Dio(), CancelToken());
+  final Apis _client = Apis(Dio(), CancelToken());
 
   @override
   Future<dynamic> getPictureOfDay() async {
     try {
-      final response = await client.getAPOD(Constants.API_KEY);
+      final response = await _client.getAPOD(Constants.API_KEY);
       return response;
     } catch (e) {
       print(e.toString());
